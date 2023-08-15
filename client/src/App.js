@@ -37,8 +37,6 @@ function App() {
 
   useEffect(() => {
     getPaths();
-    console.log(pathsList);
-    console.log(destinationsList);
   }, [destinationsList]);
   
   return (

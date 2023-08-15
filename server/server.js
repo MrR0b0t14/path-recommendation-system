@@ -19,12 +19,12 @@ app.listen(PORT, ()=> console.log(`Server running on http://localhost:${PORT}/`)
 
 app.get('/api/destinations', async (_req, res) => {
   db.getDest().then((destinations) => {
-    console.log(destinations)
     return res.status(200).json(destinations)
   }).catch((err) => {
       return res.status(500).json(err)
   })
 });
+
 app.get('/api/paths/', async (_req, res) => {
   const destination = null;
   db.getPaths(destination).then((paths) => {

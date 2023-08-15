@@ -43,16 +43,13 @@ async function connectToDatabase() {
 /*This function retrieve all destinations from the db*/
 const getDest = async () => {
     const destinationList = [];
-    
     try {
         const db = await connectToDatabase();
         const collection = db.collection("availableServers");
         const destinations = await collection.find({}).toArray();
-        console.log(destinations);
         for(const d of destinations){
             destinationList.push(d.source_address.split(",")[0]);
-        }
-        
+        } 
         return destinationList;
     } catch (error) {
         throw error;
