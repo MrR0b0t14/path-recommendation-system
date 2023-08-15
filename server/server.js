@@ -1,28 +1,46 @@
-const { password } = require('./MongoPassword.js');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+'use strict';
+const express = require('express');
+const PORT = 3001;
+const morgan = require('morgan');
+const cors = require('cors');
+const db = require('./mongoDBLib.js').allFunct;
+const app = express();
+app.use(morgan('common'));
+app.use(express.json());
+// set up and enable cors
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+};
 
-const uri = "mongodb+srv://Antonio:" + password + "@cluster0.roqxq2n.mongodb.net/?retryWrites=true&w=majority";
+app.use(cors(corsOptions));
+app.listen(PORT, ()=> console.log(`Server running on http://localhost:${PORT}/`));
 
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+
+app.get('/api/destinations', async (_req, res) => {
+  db.getDest().then((destinations) => {
+    console.log(destinations)
+    return res.status(200).json(destinations)
+  }).catch((err) => {
+      return res.status(500).json(err)
+  })
+});
+app.get('/api/paths/', async (_req, res) => {
+  const destination = null;
+  db.getPaths(destination).then((paths) => {
+    // console.log(paths)
+    return res.status(200).json(paths)
+  }).catch((err) => {
+      return res.status(500).json(err)
+  })
 });
 
-async function run() {
-  try {
-    await client.connect();
-    await client.db("scionStatsDB").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-
-    const collection = client.db("scionStatsDB").collection("availableServers");
-    const result = await collection.find({}).toArray();
-    console.log(result);
-  } finally {
-    await client.close();
-  }
-}
-
-run().catch(console.dir);
+app.get('/api/paths/:destAddress', async (req, res) => {
+  const destination = decodeURIComponent(req.params.destAddress);
+  db.getPaths(destination).then((paths) => {
+    // console.log(paths)
+    return res.status(200).json(paths)
+  }).catch((err) => {
+      return res.status(500).json(err)
+  })
+});

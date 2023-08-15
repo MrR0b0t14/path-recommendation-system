@@ -11,18 +11,21 @@ function PathsList(props){
         <Table className='table-responsive m-auto mb-2 table-expandable' striped bordered hover variant="dark" style={{maxWidth: "75%", margin: 0}}>
             <thead>
                 <tr>
-                    <th>Code</th>
-                    <th>Name</th>
-                    <th>Credits</th>
-                    <th>Max Students</th>
-                    <th>Actual Students</th>
-                    {props.editMode && <th>Actions</th>}
+                    <th>Path ID</th>
+                    <th>Destination</th>
+                    <th>Avg. Latency</th>
+                    <th>Avg. Bandwidth</th>
+                    <th>Avg. Loss</th>
+                    <th>Hop Sequence</th>
+                    <th>ISDs Traversed</th>
+                    <th>Hops Number</th>
+                    {/* {props.editMode && <th>Actions</th>} */}
                 </tr>
             </thead>
             <tbody>
             {
                 props.pathsList.map((p) => 
-                    <PathRow path={p}/>)
+                    <PathRow key={p.id} path={p}/>)
             }
             </tbody>
         </Table>
@@ -41,25 +44,18 @@ function PathRow(props){
 
 
 function PathData(props) {
-//   const updateSPAndChecks = props.updateSPAndChecks;
-
-//   const popover = (
-//     <Popover id="popover-basic" >
-//       <Popover.Header as="h3">Reason</Popover.Header>
-//       <Popover.Body>
-//         {props.course.not.problems}
-//       </Popover.Body>
-//     </Popover>
-//   );
-
     return(
       <>
-        <td>{props.path.pathId}</td>
+        <td>{props.path.id}</td>
+        <td>{props.path.destination}</td>
+        <td>{props.path.avgLatency}</td>
+        <td>{props.path.avgBandwidthScMTU}</td>
+        <td>{props.path.avgLoss}</td>
+        <td>{props.path.hopsSequence}</td>
+        <td>{props.path.isolatedDomains.toString()}</td>
         <td>{props.path.hopsNumber}</td>
-        <td>{props.path.hops}</td>
-        <td>{props.path.avg_latency}</td>
-        <td>{props.path.avg_loss}</td>
-        {/* {props.editMode && !props.course.not.state ? <td><Button variant="outline-danger" onClick={() => {updateSPAndChecks(props.course);}}>Remove</Button></td> 
+
+       {/* {props.editMode && !props.course.not.state ? <td><Button variant="outline-danger" onClick={() => {updateSPAndChecks(props.course);}}>Remove</Button></td> 
         : props.editMode && props.course.not.state && <td>
         <OverlayTrigger trigger={['hover', 'focus', 'click']} placement="left" overlay={popover}>
           <Button variant="outline-danger">Why Not?</Button>
