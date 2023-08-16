@@ -3,12 +3,12 @@ import {Container} from 'react-bootstrap';
 // import { MyNavBar } from './Components/navbar';
 import API from './API/API';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import DefaultRoute from './Components/Routes/Routes';
 // import { useEffect } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+// import CssBaseline from '@mui/material/CssBaseline';
 
 const darkTheme = createTheme({
   palette: {
@@ -23,7 +23,7 @@ function App() {
 
   const [errorMessage, setErrorMessage] = useState('');
   
-  const getPaths = async () => {
+  const getPaths = useCallback(async () => {
     try {
       const encodedHopValue = encodeURIComponent(selectedDestination);
       const destinations = await API.loadDestinationList();
@@ -33,11 +33,11 @@ function App() {
     } catch (error) {
       setErrorMessage(error);
     }
-  }
+  }, [selectedDestination]);
 
   useEffect(() => {
     getPaths();
-  }, [destinationsList]);
+  }, [getPaths]);
   
   return (
     <ThemeProvider theme={darkTheme}>

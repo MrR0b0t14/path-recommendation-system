@@ -55,14 +55,76 @@ const getDest = async () => {
         throw error;
     }
 }
+
 /*This function retrieve all Paths from the DB 
   and their stats*/
   const getPaths = async (dest) => {
     const pathsList = [];
     const regexPattern = dest ? `\\b${dest}#\\d+$` : `\\b.*#\\d+$`;
+    
+    const filters = { 
+      $match: {  
+        avg_latency: {$gt : 0, $lt : 900},
+      } 
+    };
+
     const pipeline = [
-        { $match: { hops: {$regex: new RegExp(regexPattern)} } },
-    ];
+      { 
+        $match: { 
+          hops: {$regex: new RegExp(regexPattern)}, 
+          avg_bandwidth_sc_MTU: { $ne: "Information not available" },
+          avg_latency: {$ne : "0ms"}
+        } 
+      },
+      {
+        $addFields: {
+          idWithoutTimestamp: { $substr: ["$_id", 0, { $subtract: [{ $strLenCP: "$_id" }, 27] }] },
+          pathNum: {$toInt: { $substr: ["$_id", 2, { $subtract: [{ $strLenCP: "$_id" }, 29] }] }},
+          destNum: {$toInt: { $substr: ["$_id", 0, 1 ]}}
+        }
+      },
+      {
+        $addFields: {
+          avg_latency_number: { $toDouble: {$substr: ["$avg_latency", 0, { $subtract: [{ $strLenCP: "$avg_latency" }, 2] }] }},
+          avg_loss_number: { $toDouble: { $arrayElemAt: [{ $split: ["$avg_loss", "%"] }, 0] } },
+          avg_bandwidth_sc_MTU_number: { $toDouble: { $arrayElemAt: [{ $split: ["$avg_bandwidth_sc_MTU", "Mbps" ] }, 0] } },
+          avg_bandwidth_cs_MTU_number: { $toDouble: { $arrayElemAt: [{ $split: ["$avg_bandwidth_cs_MTU", "Mbps" ] }, 0] } },
+        }
+      },
+      {
+        $group: {
+          _id: "$idWithoutTimestamp",
+          avg_latency: { $avg: "$avg_latency_number" },
+          avg_bandwidth_sc_MTU: { $avg: "$avg_bandwidth_sc_MTU_number" },
+          avg_bandwidth_cs_MTU: { $avg: "$avg_bandwidth_cs_MTU_number" },
+          avg_loss: { $avg: "$avg_loss_number" },
+          hops: { $first: "$hops" },
+          hops_number: { $first: "$hops_number" },
+          isolated_domains: { $first: "$isolated_domains" },
+          pathNum: {$first: "$pathNum"},
+          destNum: {$first: "$destNum"}
+        }
+      },
+      filters,
+      {
+        $sort: {
+          destNum:1,
+          pathNum: 1
+        }        
+      },
+      {
+        $project: {
+              idWithoutTimestamp: 1, // Get the first part of the array as the new _id
+              avg_latency: { $concat: [{$toString: "$avg_latency"},"ms"]},
+              avg_bandwidth_sc_MTU: { $concat: [{$toString: "$avg_bandwidth_sc_MTU"},"Mbps"]},
+              avg_bandwidth_cs_MTU: { $concat: [{$toString: "$avg_bandwidth_cs_MTU"},"Mbps"]},
+              avg_loss: { $concat: [{$toString: "$avg_loss"},"%"]},
+              hops_number: 1,
+              hops: 1,
+              isolated_domains: 1,
+            }
+      }
+      ];
 
     try {
         const db = await connectToDatabase();

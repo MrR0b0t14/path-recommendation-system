@@ -1,11 +1,10 @@
 // eslint-disable-next-line
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Container, Dropdown, DropdownButton, Button} from 'react-bootstrap';
+import {Container, Dropdown, DropdownButton} from 'react-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
-// import { useNavigate } from "react-router-dom";
-import { GrNetwork } from "react-icons/gr";
-// import API from "../API/API";
-import {TiThMenu} from "react-icons/ti";
+import {AppBar, Toolbar, Typography} from '@mui/material';
+import RouteIcon from '@mui/icons-material/Route';
+import FormDrawer from './pathRecommendationForm';
 
 function MyNavbar(props){
     const setMenuShow = props.setMenuShow;
@@ -15,13 +14,15 @@ function MyNavbar(props){
 
     return (
         <Container className='p-0' fluid>
-            <Navbar expand="xxl" variant="light" bg="warning">
-                <Container className='m-0 mw-100 '>
-                    <Button className="btn btn-sm btn-link bg-transparent" style={{'color': 'black'}} variant='dark' onClick={() => setMenuShow(!menuShow)}><TiThMenu size={25}/></Button>
-                    <Navbar.Brand expand="xxl"><b>Path-Recommendation System</b><GrNetwork/></Navbar.Brand>
+            <AppBar position="static">
+                <Toolbar variant="dense">
+                    <FormDrawer menuShow={menuShow} setMenuShow={setMenuShow}/>
+                    <Typography variant="button" color="secondary" component="div">
+                        <b>Path-Recommendation System</b><RouteIcon/>
+                    </Typography>
                     <DropdownChanging destinationsList={destinationsList} setDestinationsList={setDestinationsList} selectedDestination={props.selectedDestination} setSelectedDestination={props.setSelectedDestination}/>
-                </Container>
-            </Navbar>
+                </Toolbar>
+            </AppBar>
         </Container>
     );
 }

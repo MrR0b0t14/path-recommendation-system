@@ -1,5 +1,5 @@
 //import { useState } from 'react';
-import {Table, Button, Modal, Form, Row, Col, OverlayTrigger, Popover} from 'react-bootstrap';
+import {Table, Row, Col,} from 'react-bootstrap';
 
 //Everything needs to be changed, it has been copied from coursetable
 function PathsList(props){
@@ -14,7 +14,8 @@ function PathsList(props){
                     <th>Path ID</th>
                     <th>Destination</th>
                     <th>Avg. Latency</th>
-                    <th>Avg. Bandwidth</th>
+                    <th>Avg. Bandwidth Upstream</th>
+                    <th>Avg. Bandwidth Downstream</th>
                     <th>Avg. Loss</th>
                     <th>Hop Sequence</th>
                     <th>ISDs Traversed</th>
@@ -25,7 +26,7 @@ function PathsList(props){
             <tbody>
             {
                 props.pathsList.map((p) => 
-                    <PathRow key={p.id} path={p}/>)
+                    <PathRow color='primary' key={p.id} path={p}/>)
             }
             </tbody>
         </Table>
@@ -49,6 +50,7 @@ function PathData(props) {
         <td>{props.path.id}</td>
         <td>{props.path.destination}</td>
         <td>{props.path.avgLatency}</td>
+        <td>{props.path.avgBandwidthCsMTU}</td>
         <td>{props.path.avgBandwidthScMTU}</td>
         <td>{props.path.avgLoss}</td>
         <td>{props.path.hopsSequence}</td>
