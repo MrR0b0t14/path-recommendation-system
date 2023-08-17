@@ -27,7 +27,7 @@ app.get('/api/destinations', async (_req, res) => {
 
 app.get('/api/paths/', async (_req, res) => {
   const destination = null;
-  db.getPaths(destination).then((paths) => {
+  db.getPaths(destination, null).then((paths) => {
     // console.log(paths)
     return res.status(200).json(paths)
   }).catch((err) => {
@@ -37,8 +37,17 @@ app.get('/api/paths/', async (_req, res) => {
 
 app.get('/api/paths/:destAddress', async (req, res) => {
   const destination = decodeURIComponent(req.params.destAddress);
-  db.getPaths(destination).then((paths) => {
+  db.getPaths(destination, null).then((paths) => {
     // console.log(paths)
+    return res.status(200).json(paths)
+  }).catch((err) => {
+      return res.status(500).json(err)
+  })
+});
+
+app.post('/api/paths/filtered', async (req, res) => {
+  const destination = req.body.destination;
+  db.getPaths(destination, req.body).then((paths) => {
     return res.status(200).json(paths)
   }).catch((err) => {
       return res.status(500).json(err)
