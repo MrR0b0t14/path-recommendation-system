@@ -44,23 +44,30 @@ function App() {
     isdsToAvoid: '',
   }); //This is used to store the form data
 
+  const [showCode, setShowCode] = useState(false); //This is used to show the code of the selected path
+  const [selectedCodeBlock, setSelectedCodeBlock] = useState({
+    destination: '',
+    hopsSequence: '',
+  }); //This is used to store the code of the selected path
+  const [unfinished, setUnfinished] = useState(true); //This is used to check the chargement status
+
   const [errorMessage, setErrorMessage] = useState('');
   
-  const getPaths = useCallback(async () => {
+  const getPaths = async () => {
     try {
-      const encodedHopValue = encodeURIComponent(selectedDestination);
       const destinations = await API.loadDestinationList();
-      const paths = await API.loadPathsList(`/${encodedHopValue}`);
+      const paths = await API.loadPathsList();
       setDestinationsList(destinations);
       setPathsList(paths);    
+      setUnfinished(false);
     } catch (error) {
       setErrorMessage(error);
     }
-  }, [selectedDestination]);
+  };
 
   useEffect(() => {
     getPaths();
-  }, [getPaths]);
+  }, []);
   
   return (
     <ThemeProvider theme={darkTheme}>
@@ -68,7 +75,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* <Route path='/login' element={}/> */}
-          <Route path='*' element={<DefaultRoute form={form} setForm={setForm} destinationsList={destinationsList} setDestinationsList={setDestinationsList} pathsList={pathsList} setPathsList={setPathsList} selectedDestination={selectedDestination} setSelectedDestination={setSelectedDestination} menuShow={menuShow} setMenuShow={setMenuShow}/>}/>
+          <Route path='*' element={<DefaultRoute unfinished={unfinished} setUnfinished={setUnfinished} selectedCodeBlock={selectedCodeBlock} setSelectedCodeBlock={setSelectedCodeBlock} showCode={showCode} setShowCode={setShowCode} form={form} setForm={setForm} destinationsList={destinationsList} setDestinationsList={setDestinationsList} pathsList={pathsList} setPathsList={setPathsList} selectedDestination={selectedDestination} setSelectedDestination={setSelectedDestination} menuShow={menuShow} setMenuShow={setMenuShow}/>}/>
           {/* <Route path='*' element={}/> */}
         </Routes>
       </BrowserRouter>

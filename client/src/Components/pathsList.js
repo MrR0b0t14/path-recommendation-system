@@ -1,13 +1,17 @@
 //import { useState } from 'react';
 import {Table, Row, Col,} from 'react-bootstrap';
+import {Box, CircularProgress, IconButton, Modal,} from '@mui/material';
+import { CopyBlock, noctisViola, } from "react-code-blocks";
+import TerminalIcon from '@mui/icons-material/Terminal';
 
-//Everything needs to be changed, it has been copied from coursetable
 function PathsList(props){
- 
     return <>
         <Row> 
           <Col><h4>Paths Available</h4></Col>
         </Row>
+        {props.unfinished ? <Box className='mt-5 w-100 h-100 justify-content-center' sx={{ display: 'flex' }}>
+                  <CircularProgress sx={{color:"#AB47BC"}} size='10%'/>
+                 </Box> : 
         <Table className='table-responsive m-auto mb-2 table-expandable' striped bordered hover variant="dark" style={{maxWidth: "75%", margin: 0}}>
             <thead>
                 <tr>
@@ -20,16 +24,18 @@ function PathsList(props){
                     <th>Hop Sequence</th>
                     <th>ISDs Traversed</th>
                     <th>Hops Number</th>
-                    {/* {props.editMode && <th>Actions</th>} */}
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
             {
-                props.pathsList.map((p) => 
-                    <PathRow color='primary' key={p.id} path={p}/>)
+
+              props.pathsList.map((p) => 
+                    <PathRow destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} selectedCodeBlock={props.selectedCodeBlock} setSelectedCodeBlock={props.setSelectedCodeBlock} showCode={props.showCode} setShowCode={props.setShowCode} color='primary' key={p.id} path={p}/>)
             }
             </tbody>
-        </Table>
+        </Table>}
+        <BasicModal selectedCodeBlock={props.selectedCodeBlock} setSelectedCodeBlock={props.setSelectedCodeBlock} showCode={props.showCode} setShowCode={props.setShowCode}/>
     </>;
 }
 
@@ -37,7 +43,7 @@ function PathRow(props){
     return(
     <>
       <tr>
-          <PathData path={props.path}/>
+          <PathData destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} selectedCodeBlock={props.selectedCodeBlock} setSelectedCodeBlock={props.setSelectedCodeBlock} showCode={props.showCode} setShowCode={props.setShowCode} path={props.path}/>
       </tr>
     </>
   );
@@ -45,6 +51,15 @@ function PathRow(props){
 
 
 function PathData(props) {
+
+  const handleClick = () => {
+    const destComplete = props.destinationsList.find((d) => d.includes(props.path.destination));
+    props.setSelectedCodeBlock({
+      destination: destComplete,
+      hopsSequence: props.path.hopsSequence,
+    });
+    props.setShowCode(true);
+  }
     return(
       <>
         <td>{props.path.id}</td>
@@ -56,52 +71,53 @@ function PathData(props) {
         <td>{props.path.hopsSequence}</td>
         <td>{props.path.isolatedDomains.toString()}</td>
         <td>{props.path.hopsNumber}</td>
-
-       {/* {props.editMode && !props.course.not.state ? <td><Button variant="outline-danger" onClick={() => {updateSPAndChecks(props.course);}}>Remove</Button></td> 
-        : props.editMode && props.course.not.state && <td>
-        <OverlayTrigger trigger={['hover', 'focus', 'click']} placement="left" overlay={popover}>
-          <Button variant="outline-danger">Why Not?</Button>
-        </OverlayTrigger>
-      </td>} */}
+        <td>
+          <IconButton onClick={() => handleClick()} color="secondary" aria-label="code snippet">
+            <TerminalIcon/>
+          </IconButton>
+        </td>
       </>
     );
   }
 
-// function StudyPlanForm(props){
-//   const findPrereq = props.prereq;
-//   const maxStudCheck = props.max;
-//     return (
-//       <Modal
-//         show={props.show}
-//         onHide={props.onHide}
-//         size="md"
-//         aria-labelledby="contained-modal-title-vcenter"
-//         centered
-//       >
-//         <Modal.Header closeButton>
-//           <Modal.Title id="contained-modal-title-vcenter">
-//             Create Your Study Plan
-//           </Modal.Title>
-//         </Modal.Header>
-//         <Modal.Body>
-//             <Form id="myform">
-//                 <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-//                   <Form.Check
-//                     type="checkbox"
-//                     label="Full-Time"
-//                     checked={props.checked}
-//                     onChange={() => props.setChecked(!props.checked)}
-//                   />
-//                 </Form.Group>
-//             </Form> 
-//         </Modal.Body>
-//         <Modal.Footer>
-//           <Button variant="danger" onClick={props.onHide}>Not Now</Button>
-//           <Button variant="success" onClick={() => {props.setEditMode(true); findPrereq([]); maxStudCheck(); props.onHide();}}>
-//                 Start Adding Courses
-//           </Button>
-//         </Modal.Footer>
-//       </Modal>
-//     );
-// }
+function BasicModal(props) {
+    const style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: "75%",
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      rounded: 0,
+      boxShadow: 24,
+      p: 5,
+    };
+
+    const open = props.showCode ? props.showCode : false;
+    const setOpen = props.setShowCode;
+    const code = `scion traceroute '${props.selectedCodeBlock.destination}' --sequence '${props.selectedCodeBlock.hopsSequence}'`;
+    const handleClose = () => setOpen(false);
+  
+    return (
+      <div>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box className='rounded' sx={style}>
+            <CopyBlock
+              text={code}
+              language={"bash"}
+              showLineNumbers={false}
+              theme={noctisViola}
+              codeBlock
+            />;
+          </Box>
+        </Modal>
+      </div>
+    );
+  }
 export default PathsList;

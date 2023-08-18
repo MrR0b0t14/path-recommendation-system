@@ -15,10 +15,10 @@ const setPathsList = props.setPathsList;
         <Row style={{'height':'100%'}}>
             <Col>
                 <Row>
-                    <MyNavbar pathsList={pathsList} setPathsList={setPathsList} form={form} setForm={setForm} destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} menuShow={menuShow} setMenuShow={props.setMenuShow} selectedDestination={props.selectedDestination} setSelectedDestination={props.setSelectedDestination}/>
+                    <MyNavbar unfinished={props.unfinished} setUnfinished={props.setUnfinished} pathsList={pathsList} setPathsList={setPathsList} form={form} setForm={setForm} destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} menuShow={menuShow} setMenuShow={props.setMenuShow} selectedDestination={props.selectedDestination} setSelectedDestination={props.setSelectedDestination}/>
                 </Row>
                 <Row>
-                    <PathsList pathsList={props.pathsList}/>
+                    <PathsList unfinished={props.unfinished} destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} selectedCodeBlock={props.selectedCodeBlock} setSelectedCodeBlock={props.setSelectedCodeBlock} showCode={props.showCode} setShowCode={props.setShowCode} pathsList={props.pathsList}/>
                 </Row>
             </Col>
         </Row>

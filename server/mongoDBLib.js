@@ -47,8 +47,10 @@ const getDest = async () => {
         const db = await connectToDatabase();
         const collection = db.collection("availableServers");
         const destinations = await collection.find({}).toArray();
+        destinations.sort((a, b) => (a.source_address > b.source_address) ? 1 : -1);
+        console.log(destinations);
         for(const d of destinations){
-            destinationList.push(d.source_address.split(",")[0]);
+            destinationList.push(d.source_address);
         } 
         return destinationList;
     } catch (error) {

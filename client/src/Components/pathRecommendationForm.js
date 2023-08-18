@@ -22,12 +22,15 @@ function PathRecommendationForm(props){
     const form = props.form;
     const setForm = props.setForm;
     const setPathsList = props.setPathsList;
+    const setUnfinished = props.setUnfinished;
 
     async function handleSubmit(event) {
         event.preventDefault();
         try {
+            setUnfinished(true);
             const paths = await API.loadFilteredPaths(form);
             setPathsList(paths);
+            setUnfinished(false);
             props.setMenuShow(false);
           } catch (error) {
             console.log(error);
@@ -132,7 +135,12 @@ const StyledMenu = styled((props) => (
       const destinationsList = props.destinationsList;
       const [anchorEl, setAnchorEl] = React.useState(null);
       const open = Boolean(anchorEl);
-  
+      let dList = [];
+      
+      for(const d of destinationsList){
+        dList.push(d.split(",")[0]);
+      } 
+
       const handleClick = (event) => {
           setAnchorEl(event.currentTarget);
       };
@@ -140,8 +148,7 @@ const StyledMenu = styled((props) => (
       const handleClose = (value) => {
           setAnchorEl(null);
           setSelectedDestination(value);
-          props.setForm({...props.form, destination: props.selectedDestination});
-          console.log(props.form);
+          props.setForm(prevForm => ({...prevForm, destination: value}));
       };
   
     return (
@@ -172,7 +179,7 @@ const StyledMenu = styled((props) => (
             All Destinations
           </MenuItem>
           {
-              destinationsList.map((d,i) => 
+              dList.map((d,i) => 
                   <MenuItem onClick={() => handleClose(d)} disableRipple key={i}>{d}</MenuItem>
               )
           }
@@ -212,7 +219,7 @@ function FormDrawer(props){
                 onClose={toggleDrawer(false)}
                 onOpen={toggleDrawer(true)}
             >
-                <PathRecommendationForm destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} selectedDestination={props.selectedDestination} setSelectedDestination={props.setSelectedDestination} menuShow={menuShow} setMenuShow={setMenuShow} pathsList={pathsList} setPathsList={setPathsList} form={form} setForm={setForm} />
+                <PathRecommendationForm unfinished={props.unfinished} setUnfinished={props.setUnfinished} destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} selectedDestination={props.selectedDestination} setSelectedDestination={props.setSelectedDestination} menuShow={menuShow} setMenuShow={setMenuShow} pathsList={pathsList} setPathsList={setPathsList} form={form} setForm={setForm} />
             </SwipeableDrawer>  
         </>
     );

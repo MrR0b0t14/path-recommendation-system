@@ -18,10 +18,10 @@ function MyNavbar(props){
 
     return (
         <Container className='p-0' fluid>
-            <AppBar position="static">
+            <AppBar position="sticky">
                 <Toolbar variant="dense">
                     <div style={{marginRight: "27.5%"}} className='mr-5 d-flex justify-content-center align-items-center'>
-                        <FormDrawer destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} selectedDestination={props.selectedDestination} setSelectedDestination={props.setSelectedDestination} pathsList={pathsList} setPathsList={setPathsList} form={form} setForm={setForm} menuShow={menuShow} setMenuShow={setMenuShow}/>
+                        <FormDrawer unfinished={props.unfinished} setUnfinished={props.setUnfinished} destinationsList={props.destinationsList} setDestinationsList={props.setDestinationsList} selectedDestination={props.selectedDestination} setSelectedDestination={props.setSelectedDestination} pathsList={pathsList} setPathsList={setPathsList} form={form} setForm={setForm} menuShow={menuShow} setMenuShow={setMenuShow}/>
                         <Typography variant="button" color="secondary" component="div">
                             <b>Path-Recommendation System</b><RouteIcon/>
                         </Typography>

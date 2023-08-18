@@ -22,8 +22,8 @@ async function loadDestinationList() {
 }
 
 /*This function is the one which fetches the request to get all courses from the server or only the ones of a study plan*/
-async function loadPathsList(dest) {
-    const url = SERVER_URL + '/paths' + dest;
+async function loadPathsList() {
+    const url = SERVER_URL + '/paths/';
     try {
         let response;
         response = await fetch(url);
@@ -52,7 +52,6 @@ async function loadFilteredPaths(filters){
             },
             body: JSON.stringify(filters),
         });
-        console.log(JSON.stringify(filters));
         if(response.ok) {
             const arr =  await response.json()
             const pathList = arr.map((p) => new Path(p.id, p.destination, p.avgLatency, p.avgBandwidthCs64, p.avgBandwidthSc64, p.avgBandwidthCsMTU, p.avgBandwidthScMTU, p.avgLoss, p.timestamp, p.hopsNumber, p.hopsSequence, p.isolatedDomains));
